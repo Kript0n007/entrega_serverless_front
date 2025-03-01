@@ -9,43 +9,44 @@ export default function Home() {
   const [cliente, setCliente] = useState("");
   const [email, setEmail] = useState("");
   const [produto, setProduto] = useState("");
-  const [quantidade, setQuantidade] = useState();
-  const [preco, setPreco] = useState();
+  const [quantidade, setQuantidade] = useState<number | undefined>();
+  const [preco, setPreco] = useState<number | undefined>();
   const [pedidos, setPedidos] = useState([]);
-  const [responseData, setResponseData] = useState(null); // Armazena o último JSON da resposta
+  const [responseData, setResponseData] = useState<string | null>(null); // Definição correta
 
   useEffect(() => {
     fetchPedidos();
   }, []);
 
-  // 1. Buscar todos os pedidos
   const fetchPedidos = async () => {
     try {
       const response = await axios.get(`${API_URL}/all`);
       setPedidos(response.data);
-      setResponseData(response.data);
+      setResponseData(JSON.stringify(response.data, null, 2)); // Exibir como JSON formatado
     } catch (error: unknown) {
       console.error("Erro ao buscar pedidos:", error);
       if (axios.isAxiosError(error)) {
-        setResponseData(error.response?.data || error.message);
+        setResponseData(JSON.stringify(error.response?.data || error.message, null, 2));
       } else {
-        setResponseData("Erro desconhecido");
+        setResponseData(JSON.stringify("Erro desconhecido", null, 2));
       }
     }
   };
-  
+
   const criarPedido = async (e: React.FormEvent) => {
     e.preventDefault();
     const novoPedido = {
       cliente,
       email,
-      itens: [{ produto, quantidade: Number(quantidade), preco: Number(preco) }],
+      itens: [
+        { produto, quantidade: Number(quantidade), preco: Number(preco) },
+      ],
     };
-  
+
     try {
       const response = await axios.post(API_URL, novoPedido);
       alert("Pedido criado com sucesso!");
-      setResponseData(response.data);
+      setResponseData(JSON.stringify(response.data, null, 2));
       setCliente("");
       setEmail("");
       setProduto("");
@@ -55,41 +56,41 @@ export default function Home() {
     } catch (error: unknown) {
       console.error("Erro ao criar pedido:", error);
       if (axios.isAxiosError(error)) {
-        setResponseData(error.response?.data || error.message);
+        setResponseData(JSON.stringify(error.response?.data || error.message, null, 2));
       } else {
-        setResponseData("Erro desconhecido");
+        setResponseData(JSON.stringify("Erro desconhecido", null, 2));
       }
     }
   };
-  
+
   const atualizarStatus = async (id: string, status: string) => {
     try {
       const response = await axios.patch(`${API_URL}/${id}/status`, { status });
       alert("Status atualizado com sucesso!");
-      setResponseData(response.data);
+      setResponseData(JSON.stringify(response.data, null, 2));
       fetchPedidos();
     } catch (error: unknown) {
       console.error("Erro ao atualizar status:", error);
       if (axios.isAxiosError(error)) {
-        setResponseData(error.response?.data || error.message);
+        setResponseData(JSON.stringify(error.response?.data || error.message, null, 2));
       } else {
-        setResponseData("Erro desconhecido");
+        setResponseData(JSON.stringify("Erro desconhecido", null, 2));
       }
     }
   };
-  
+
   const deletarPedido = async (id: string) => {
     try {
       const response = await axios.delete(`${API_URL}/${id}`);
       alert("Pedido deletado com sucesso!");
-      setResponseData(response.data);
+      setResponseData(JSON.stringify(response.data, null, 2));
       fetchPedidos();
     } catch (error: unknown) {
       console.error("Erro ao deletar pedido:", error);
       if (axios.isAxiosError(error)) {
-        setResponseData(error.response?.data || error.message);
+        setResponseData(JSON.stringify(error.response?.data || error.message, null, 2));
       } else {
-        setResponseData("Erro desconhecido");
+        setResponseData(JSON.stringify("Erro desconhecido", null, 2));
       }
     }
   };
@@ -133,7 +134,7 @@ export default function Home() {
           type="number"
           placeholder="Quantidade"
           value={quantidade}
-          onChange={(e) => setQuantidade(e.target.value)}
+          onChange={(e) => setQuantidade(Number(e.target.value))}
           className="w-full p-2 mb-2 border rounded text-gray-900"
           required
         />
@@ -141,7 +142,7 @@ export default function Home() {
           type="number"
           placeholder="Preço"
           value={preco}
-          onChange={(e) => setPreco(e.target.value)}
+          onChange={(e) => setPreco(Number(e.target.value))}
           className="w-full p-2 mb-2 border rounded text-gray-900"
           required
         />
@@ -201,7 +202,7 @@ export default function Home() {
         </h2>
         {responseData ? (
           <pre className="bg-black text-white p-4 rounded overflow-auto h-64">
-            {JSON.stringify(responseData, null, 2)}
+            {responseData}
           </pre>
         ) : (
           <p className="text-gray-900">Nenhuma resposta ainda.</p>
