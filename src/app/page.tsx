@@ -24,62 +24,73 @@ export default function Home() {
       const response = await axios.get(`${API_URL}/all`);
       setPedidos(response.data);
       setResponseData(response.data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao buscar pedidos:", error);
-      setResponseData(error.response?.data || error.message);
+      if (axios.isAxiosError(error)) {
+        setResponseData(error.response?.data || error.message);
+      } else {
+        setResponseData("Erro desconhecido");
+      }
     }
   };
-
-  // 3. Criar pedido
-  const criarPedido = async (e) => {
+  
+  const criarPedido = async (e: React.FormEvent) => {
     e.preventDefault();
     const novoPedido = {
       cliente,
       email,
-      itens: [
-        { produto, quantidade: Number(quantidade), preco: Number(preco) },
-      ],
+      itens: [{ produto, quantidade: Number(quantidade), preco: Number(preco) }],
     };
-
+  
     try {
       const response = await axios.post(API_URL, novoPedido);
       alert("Pedido criado com sucesso!");
-      setResponseData(response.data);  // Exibe o JSON de criação
+      setResponseData(response.data);
       setCliente("");
       setEmail("");
       setProduto("");
-      setQuantidade();
-      setPreco();
+      setQuantidade(undefined);
+      setPreco(undefined);
       fetchPedidos();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao criar pedido:", error);
-      setResponseData(error.response?.data || error.message);
+      if (axios.isAxiosError(error)) {
+        setResponseData(error.response?.data || error.message);
+      } else {
+        setResponseData("Erro desconhecido");
+      }
     }
   };
-
-  // 4. Atualizar Status
-  const atualizarStatus = async (id, status) => {
+  
+  const atualizarStatus = async (id: string, status: string) => {
     try {
       const response = await axios.patch(`${API_URL}/${id}/status`, { status });
       alert("Status atualizado com sucesso!");
-      setResponseData(response.data);  // Exibe o JSON de atualização
+      setResponseData(response.data);
       fetchPedidos();
-    } catch (error: any ) {
+    } catch (error: unknown) {
       console.error("Erro ao atualizar status:", error);
-      setResponseData(error.response?.data || error.message);
+      if (axios.isAxiosError(error)) {
+        setResponseData(error.response?.data || error.message);
+      } else {
+        setResponseData("Erro desconhecido");
+      }
     }
   };
-
-  // 5. Deletar pedido
-  const deletarPedido = async (id) => {
+  
+  const deletarPedido = async (id: string) => {
     try {
       const response = await axios.delete(`${API_URL}/${id}`);
       alert("Pedido deletado com sucesso!");
-      setResponseData(response.data);  // Exibe o JSON de deleção
+      setResponseData(response.data);
       fetchPedidos();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Erro ao deletar pedido:", error);
-      setResponseData(error.response?.data || error.message);
+      if (axios.isAxiosError(error)) {
+        setResponseData(error.response?.data || error.message);
+      } else {
+        setResponseData("Erro desconhecido");
+      }
     }
   };
 
