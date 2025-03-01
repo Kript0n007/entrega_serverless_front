@@ -24,7 +24,7 @@ export default function Home() {
       const response = await axios.get(`${API_URL}/all`);
       setPedidos(response.data);
       setResponseData(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao buscar pedidos:", error);
       setResponseData(error.response?.data || error.message);
     }
@@ -51,7 +51,7 @@ export default function Home() {
       setQuantidade();
       setPreco();
       fetchPedidos();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao criar pedido:", error);
       setResponseData(error.response?.data || error.message);
     }
@@ -64,7 +64,7 @@ export default function Home() {
       alert("Status atualizado com sucesso!");
       setResponseData(response.data);  // Exibe o JSON de atualização
       fetchPedidos();
-    } catch (error) {
+    } catch (error: any ) {
       console.error("Erro ao atualizar status:", error);
       setResponseData(error.response?.data || error.message);
     }
