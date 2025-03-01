@@ -5,13 +5,25 @@ import axios from "axios";
 
 const API_URL = "https://us-central1-facu-serverless.cloudfunctions.net/serverless/orders";
 
+// Definição do tipo Pedido
+interface Pedido {
+  id: string;
+  cliente: string;
+  email: string;
+  itens: { produto: string; quantidade: number; preco: number }[];
+  total: number;
+  status: string;
+  data_criacao: string;
+  data_atualizacao: string;
+}
+
 export default function Home() {
   const [cliente, setCliente] = useState("");
   const [email, setEmail] = useState("");
   const [produto, setProduto] = useState("");
   const [quantidade, setQuantidade] = useState<number | undefined>();
   const [preco, setPreco] = useState<number | undefined>();
-  const [pedidos, setPedidos] = useState([]);
+  const [pedidos, setPedidos] = useState<Pedido[]>([]); // Agora corretamente tipado
   const [responseData, setResponseData] = useState<string | null>(null); // Definição correta
 
   useEffect(() => {
@@ -22,7 +34,7 @@ export default function Home() {
     try {
       const response = await axios.get(`${API_URL}/all`);
       setPedidos(response.data);
-      setResponseData(JSON.stringify(response.data, null, 2)); // Exibir como JSON formatado
+      setResponseData(JSON.stringify(response.data, null, 2));
     } catch (error: unknown) {
       console.error("Erro ao buscar pedidos:", error);
       if (axios.isAxiosError(error)) {
@@ -38,9 +50,7 @@ export default function Home() {
     const novoPedido = {
       cliente,
       email,
-      itens: [
-        { produto, quantidade: Number(quantidade), preco: Number(preco) },
-      ],
+      itens: [{ produto, quantidade: Number(quantidade), preco: Number(preco) }],
     };
 
     try {
@@ -192,20 +202,6 @@ export default function Home() {
           </ul>
         ) : (
           <p className="text-gray-900">Nenhum pedido encontrado.</p>
-        )}
-      </div>
-
-      {/* Exibir o JSON de cada requisição */}
-      <div className="mt-6 w-full max-w-lg">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900">
-          Resposta JSON
-        </h2>
-        {responseData ? (
-          <pre className="bg-black text-white p-4 rounded overflow-auto h-64">
-            {responseData}
-          </pre>
-        ) : (
-          <p className="text-gray-900">Nenhuma resposta ainda.</p>
         )}
       </div>
     </div>
