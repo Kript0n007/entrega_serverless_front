@@ -2,7 +2,6 @@
 export const dynamic = "force-static";
 
 import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
 
 const API_URL = "https://us-central1-facu-serverless.cloudfunctions.net/serverless/orders";
 
